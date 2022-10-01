@@ -5,7 +5,9 @@ using UnityEngine;
 public class ControlaBala : MonoBehaviour
 {
     public float Velocity = 20;
+    public AudioClip SomMorteZumbi;
     private Rigidbody rigidbodyBala;
+    private int danoDoTiro = 1;
 
     private void Start()
     {
@@ -22,9 +24,14 @@ public class ControlaBala : MonoBehaviour
     // quando há colisão esse metodo é chamado
     void OnTriggerEnter(Collider objetoDeColisao)
     {
-        if(objetoDeColisao.tag == "Inimigo")
+        switch(objetoDeColisao.tag)
         {
-            Destroy(objetoDeColisao.gameObject);
+            case Tags.Inimigo:
+                objetoDeColisao.GetComponent<ControlaZumbi>().TomarDano(danoDoTiro);
+                break;
+            case Tags.ChefeDeFase:
+                objetoDeColisao.GetComponent<ControlaChefe>().TomarDano(danoDoTiro);
+                break;
         }
 
         // gameObject proprio objeto do script

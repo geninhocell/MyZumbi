@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Velocity: 20
+  SomMorteZumbi: {fileID: 8300000, guid: 107c7995e9f6f724b8a5fd099b2f5103, type: 3}
 --- !u!54 &-8915646101456574654
 Rigidbody:
   m_ObjectHideFlags: 0

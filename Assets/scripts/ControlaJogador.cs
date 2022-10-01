@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class ControlaJogador : MonoBehaviour
+public class ControlaJogador : MonoBehaviour, IMatavel, ICuravel
 {
     // Start is called before the first frame update
     //void Start()
@@ -9,27 +8,28 @@ public class ControlaJogador : MonoBehaviour
 
     //}
 
-    public float Velocity = 10;
     public LayerMask mascaraDoChao;
     public GameObject TextoGameOver;
-    public bool Vivo = true;
+    public ControlaInterface ScriptControlaInterface;
+    public AudioClip SomDeDano;
+    public Status statusJogador;
     private Vector3 direction;
-    private Rigidbody rigidbodyJogador;
-    private Animator animatorJogador;
-    public int Vida = 100;
+    private MovimentoJogador movimentaJogador;
+    private AnimacaoPersonagem animaJogador;
 
     private void Start()
     {
-        Time.timeScale = 1;
-        rigidbodyJogador = GetComponent<Rigidbody>();
-        animatorJogador = GetComponent<Animator>();
+        
+        movimentaJogador = GetComponent<MovimentoJogador>();
+        animaJogador = GetComponent<AnimacaoPersonagem>();
+        statusJogador = GetComponent<Status>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        float axisX = Input.GetAxis("Horizontal"); // A D e <- ->
-        float axisZ = Input.GetAxis("Vertical");
+        float axisX = Input.GetAxis(Tags.Horizontal); // A D e <- ->
+        float axisZ = Input.GetAxis(Tags.Vertical);
 
         direction = new Vector3(axisX, 0, axisZ);
 
@@ -37,58 +37,45 @@ public class ControlaJogador : MonoBehaviour
         //transform.Translate(Vector3.forward);
         //transform.Translate(direction * Velocity * Time.deltaTime);
 
-        if(direction != Vector3.zero)
-        {
-            animatorJogador.SetBool("Moving", true);
-        }
-        else
-        {
-            animatorJogador.SetBool("Moving", false);
-        }
-
-        if(Vivo == false)
-        {
-            if (Input.GetButtonDown("Fire1"))
-            {
-                SceneManager.LoadScene("SampleScene");
-            }
-        }
+        animaJogador.Movimentar(direction.magnitude);       
     }
 
     void FixedUpdate()
     {
-        rigidbodyJogador
-            .MovePosition(
-                rigidbodyJogador.position + direction * Velocity * Time.deltaTime
-            );
+        movimentaJogador.Movimentar(direction, statusJogador.Velocidade);
 
-        // apartir da camera principal, criar raio para posição do mouse
-        Ray raio = Camera.main.ScreenPointToRay(Input.mousePosition);
+        movimentaJogador.RotacaoJogador(mascaraDoChao);
+    }
 
-        // desenhar raio na tela
-        Debug.DrawRay(raio.origin, raio.direction * 100, Color.red);
+    public void TomarDano(int dano)
+    {
+        statusJogador.Vida -= dano;
 
-        // posição de impacto
-        RaycastHit impacto;
+        ScriptControlaInterface.AtualizarSliderVidaJogador();
 
-        // Gerar o raio
-        // impacto sera atribuido
-        // 100 distancia
-        // mascaraDoChao pegar somente chão
-        if (Physics.Raycast(raio, out impacto, 100, mascaraDoChao))
+        ControlaAudio.instancia.PlayOneShot(SomDeDano);
+
+        if (statusJogador.Vida <= 0)
         {
-            // guardar posição ao ponto de impacto
-            // transform.position, posição do jogador
-            Vector3 posicaoMiraJogador = impacto.point - transform.position;
-
-            // cancelar y para jogador não olha para o chão
-            posicaoMiraJogador.y = transform.position.y;
-
-            // pagar nova visão do jogador
-            Quaternion novaRotacao = Quaternion.LookRotation(posicaoMiraJogador);
-
-            // atualizar rotação do jogador
-            rigidbodyJogador.MoveRotation(novaRotacao);
+            Morrer();
         }
+    }
+
+    public void Morrer()
+    {
+        //TextoGameOver.SetActive(true);
+        ScriptControlaInterface.GameOver();
+    }
+
+    public void CurarVida(int quantidadeDeCura)
+    {
+        statusJogador.Vida += quantidadeDeCura;
+
+        if(statusJogador.Vida > statusJogador.VidaInicial)
+        {
+            statusJogador.Vida = statusJogador.VidaInicial;
+        }
+
+        ScriptControlaInterface.AtualizarSliderVidaJogador();
     }
 }
