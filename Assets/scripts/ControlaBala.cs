@@ -24,13 +24,18 @@ public class ControlaBala : MonoBehaviour
     // quando há colisão esse metodo é chamado
     void OnTriggerEnter(Collider objetoDeColisao)
     {
+        Quaternion rotacaoOpostaABala = Quaternion.LookRotation(-transform.forward);
         switch(objetoDeColisao.tag)
         {
             case Tags.Inimigo:
-                objetoDeColisao.GetComponent<ControlaZumbi>().TomarDano(danoDoTiro);
+                ControlaZumbi zumbi = objetoDeColisao.GetComponent<ControlaZumbi>();
+                zumbi.TomarDano(danoDoTiro);
+                zumbi.ParticulaSangue(transform.position, rotacaoOpostaABala);
                 break;
             case Tags.ChefeDeFase:
-                objetoDeColisao.GetComponent<ControlaChefe>().TomarDano(danoDoTiro);
+                ControlaChefe chefe = objetoDeColisao.GetComponent<ControlaChefe>();
+                chefe.TomarDano(danoDoTiro);
+                chefe.ParticulaSangue(transform.position, rotacaoOpostaABala);
                 break;
         }
 

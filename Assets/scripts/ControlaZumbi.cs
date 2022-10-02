@@ -3,10 +3,9 @@ using UnityEngine;
 public class ControlaZumbi : MonoBehaviour, IMatavel
 
 {
-    public GameObject Jogador;
+    public GameObject Jogador, KitMedicoPrefab, ParticulaSangueZumbi;
     [HideInInspector]
     public GeradorZumbis MeuGeradorZumbis;
-    public GameObject KitMedicoPrefab;
     public AudioClip SomMorteZumbi;
     private ControlaInterface scriptControlaInterface;
     private MovimentoPersonagem movimentaZumbi;
@@ -125,6 +124,10 @@ public class ControlaZumbi : MonoBehaviour, IMatavel
         }
     }
 
+    public void ParticulaSangue(Vector3 posicao, Quaternion rotacao)
+    {
+        Instantiate(ParticulaSangueZumbi, posicao, rotacao);
+    }
     public void Morrer()
     {
         Destroy(gameObject, 2);

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class ControlaInterface : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class ControlaInterface : MonoBehaviour
     public Text TextoTempoDeSobrevivencia;
     public Text TextoTempoDeSobrevivenciaMaxima;
     public Text TextoQuantidadeDeZumbisMortos;
+    public Text TextoChefeAparece;
     private float tempoMaximo;
     private int quantidadeDeZumbisMortos;
 
@@ -74,5 +76,32 @@ public class ControlaInterface : MonoBehaviour
     public void Reiniciar()
     {
         SceneManager.LoadScene(Tags.SampleScene);
+    }
+
+    public void AparecerTextoChefeCriado()
+    {
+        StartCoroutine(DesaparecerTexto(2, TextoChefeAparece));
+    }
+
+    IEnumerator DesaparecerTexto(float tempoParaSumir, Text textoParaSumir)
+    {
+        textoParaSumir.gameObject.SetActive(true);
+        Color corTexto = textoParaSumir.color;
+        corTexto.a = 1;
+        textoParaSumir.color = corTexto;
+
+        yield return new WaitForSeconds(tempoParaSumir);
+        float contador = 0f;
+        while(textoParaSumir.color.a > 0)
+        {
+            contador += Time.deltaTime / tempoParaSumir;
+            corTexto.a = Mathf.Lerp(1, 0, contador);
+            textoParaSumir.color = corTexto;
+            if(textoParaSumir.color.a <= 0)
+            {
+                textoParaSumir.gameObject.SetActive(false);
+            }
+            yield return null;
+        }
     }
 }

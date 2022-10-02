@@ -677,6 +677,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Jogador: {fileID: 0}
   KitMedicoPrefab: {fileID: 1060151288946202, guid: 6150c6f66b7034ec5b3672478195682a, type: 3}
+  ParticulaSangueZumbi: {fileID: 4411885023854331742, guid: 13d2dc5c7117ad8479754393093abef2, type: 3}
+  MeuGeradorZumbis: {fileID: 0}
   SomMorteZumbi: {fileID: 8300000, guid: 107c7995e9f6f724b8a5fd099b2f5103, type: 3}
 --- !u!114 &3435176140308268339
 MonoBehaviour:
